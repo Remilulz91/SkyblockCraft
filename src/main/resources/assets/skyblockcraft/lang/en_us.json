@@ -1,0 +1,62 @@
+{
+  "config.skyblockcraft.title": "SkyblockCraft Configuration",
+  "config.skyblockcraft.category.islands": "Islands",
+  "config.skyblockcraft.category.economy": "Economy",
+  "config.skyblockcraft.category.merchant": "Merchant",
+  "config.skyblockcraft.category.ui": "Interface",
+  "config.skyblockcraft.category.debug": "Debug",
+
+  "config.skyblockcraft.islandSpacing": "Island spacing (blocks)",
+  "config.skyblockcraft.islandSpacing.tooltip": "Distance in blocks between two player islands on the grid. 512 is a safe default.",
+  "config.skyblockcraft.islandY": "Island Y level",
+  "config.skyblockcraft.islandsGridOriginX": "Grid origin X",
+  "config.skyblockcraft.islandsGridOriginZ": "Grid origin Z",
+  "config.skyblockcraft.allowIslandVisits": "Allow /island visit",
+
+  "config.skyblockcraft.startingCoins": "Starting coins for new players",
+  "config.skyblockcraft.maxCoins": "Max coins per player",
+  "config.skyblockcraft.maxCoins.tooltip": "Set to 0 for unlimited.",
+  "config.skyblockcraft.allowPlayerPay": "Allow /pay between players",
+  "config.skyblockcraft.minPayAmount": "Minimum /pay amount",
+
+  "config.skyblockcraft.merchantDisplayName": "Sky Merchant display name",
+
+  "config.skyblockcraft.showBalanceOnJoin": "Show balance on player join",
+
+  "config.skyblockcraft.enableDebugCommands": "Enable /skyblock debug commands",
+  "config.skyblockcraft.enableDebugCommands.tooltip": "DEBUG build only. Public builds ignore this flag.",
+  "config.skyblockcraft.debugAllowIslandOverride": "Allow regenerating an existing island",
+  "config.skyblockcraft.debugAllowIslandOverride.tooltip": "DEBUG build only. Allows /island create to overwrite an existing island record.",
+
+  "skyblockcraft.economy.balance_self": "Your balance: %d coins",
+  "skyblockcraft.economy.balance_other": "%s has %d coins",
+  "skyblockcraft.economy.pay_disabled": "Player-to-player payments are disabled on this server.",
+  "skyblockcraft.economy.pay_too_low": "Minimum payment amount is %d coins.",
+  "skyblockcraft.economy.pay_self": "You can't pay yourself.",
+  "skyblockcraft.economy.pay_not_enough": "You don't have enough coins.",
+  "skyblockcraft.economy.pay_sent": "Sent %d coins to %s.",
+  "skyblockcraft.economy.pay_received": "Received %d coins from %s.",
+
+  "skyblockcraft.island.created": "Island created at %d, %d, %d. Welcome!",
+  "skyblockcraft.island.already_have": "You already have an island.",
+  "skyblockcraft.island.use_home": "Use /island home to teleport there.",
+  "skyblockcraft.island.use_create": "Use /island create to generate one.",
+  "skyblockcraft.island.no_island": "You don't have an island yet.",
+  "skyblockcraft.island.teleported_home": "Teleported to your island.",
+  "skyblockcraft.island.visiting": "Visiting %s's island.",
+  "skyblockcraft.island.target_no_island": "%s does not have an island.",
+  "skyblockcraft.island.visits_disabled": "Island visits are disabled on this server.",
+  "skyblockcraft.island.deleted_admin": "Deleted island record for %s.",
+
+  "skyblockcraft.merchant.your_balance": "Your balance: %d coins",
+  "skyblockcraft.merchant.no_offers": "No offers available right now.",
+  "skyblockcraft.merchant.hover_buy": "Click to buy offer: %s",
+  "skyblockcraft.merchant.unknown_offer": "Unknown offer: %s",
+  "skyblockcraft.merchant.not_enough": "Not enough coins (need %d, you have %d).",
+  "skyblockcraft.merchant.bought": "Bought %d× %s for %d coins. New balance: %d.",
+
+  "skyblockcraft.command.merchant_spawned": "Sky Merchant spawned at %d, %d, %d.",
+  "skyblockcraft.command.reloaded": "Configuration reloaded (%d merchant offers).",
+
+  "entity.skyblockcraft.sky_merchant": "Sky Merchant"
+}

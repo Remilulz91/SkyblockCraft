@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "skyblockcraft",
+  "version": "${version}",
+  "name": "SkyblockCraft",
+  "description": "A classic Skyblock mod with a virtual coin economy and custom Sky Merchant villagers. Generate your own island, earn coins, and trade with merchants.",
+  "authors": [
+    "Remilulz_91"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Remilulz91/SkyblockCraft",
+    "sources": "https://github.com/Remilulz91/SkyblockCraft",
+    "issues": "https://github.com/Remilulz91/SkyblockCraft/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/skyblockcraft/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "fr.skyblockcraft.SkyblockCraft"
+    ],
+    "client": [
+      "fr.skyblockcraft.client.SkyblockCraftClient"
+    ],
+    "modmenu": [
+      "fr.skyblockcraft.client.config.ModMenuIntegration"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "~${minecraft_version}",
+    "java": ">=21"
+  },
+  "recommends": {
+    "cloth-config": "*",
+    "modmenu": "*"
+  }
+}
