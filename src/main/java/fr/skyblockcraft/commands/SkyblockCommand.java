@@ -10,7 +10,6 @@ import fr.skyblockcraft.config.SkyblockCraftConfig;
 import fr.skyblockcraft.merchant.SkyMerchantManager;
 import fr.skyblockcraft.merchant.SkyMerchantOffer;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -67,7 +66,7 @@ public class SkyblockCommand {
         Vec3d pos = player.getPos();
         BlockPos blockPos = BlockPos.ofFloored(pos);
 
-        VillagerEntity villager = EntityType.VILLAGER.create(world, SpawnReason.COMMAND);
+        VillagerEntity villager = EntityType.VILLAGER.create(world);
         if (villager == null) {
             ctx.getSource().sendError(Text.literal("Failed to create villager entity"));
             return 0;
