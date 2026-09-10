@@ -14,11 +14,6 @@ import java.util.Map;
 /**
  * Central configuration for SkyblockCraft.
  * Saved to config/skyblockcraft.json.
- *
- * Values can be modified via:
- * - The in-game config screen (Mod Menu + Cloth Config)
- * - The command /skyblock config (OP)
- * - Directly in the config/skyblockcraft.json file
  */
 public class SkyblockCraftConfig {
 
@@ -68,28 +63,107 @@ public class SkyblockCraftConfig {
 
     // === Merchant settings ===
 
-    /** Display name shown above a Sky Merchant villager. */
-    public String merchantDisplayName = "Sky Merchant";
+    /**
+     * DEPRECATED (v0.1 legacy): flat offer list for the generic merchant.
+     * Kept for backward compatibility. On config load, if this is populated but
+     * merchants.general.offers is empty, entries are migrated automatically.
+     */
+    @Deprecated
+    public Map<String, String> merchantOffers = null;
 
     /**
-     * Merchant offers. Key is the offer ID, value is "ITEM:COUNT:PRICE_IN_COINS".
-     * Example: "diamond" -> "minecraft:diamond:1:50"
-     *
-     * On config load, validated and parsed into {@link fr.skyblockcraft.merchant.SkyMerchantOffer}.
+     * Per-type merchant configuration. Key is the type id (farmer/miner/adventurer/general).
+     * Each type has a display name, its own offers (what it sells) and its own
+     * buybacks (what it buys back from the player).
      */
-    public Map<String, String> merchantOffers = defaultOffers();
+    public Map<String, MerchantTypeConfig> merchants = defaultMerchants();
 
-    private static Map<String, String> defaultOffers() {
-        Map<String, String> map = new LinkedHashMap<>();
-        map.put("dirt_stack", "minecraft:dirt:64:5");
-        map.put("oak_log_stack", "minecraft:oak_log:16:25");
-        map.put("cobblestone_stack", "minecraft:cobblestone:64:10");
-        map.put("iron_ingot", "minecraft:iron_ingot:1:30");
-        map.put("gold_ingot", "minecraft:gold_ingot:1:60");
-        map.put("diamond", "minecraft:diamond:1:150");
-        map.put("emerald", "minecraft:emerald:1:200");
-        map.put("water_bucket", "minecraft:water_bucket:1:80");
-        map.put("lava_bucket", "minecraft:lava_bucket:1:80");
+    /** Nested config object for one merchant type. */
+    public static class MerchantTypeConfig {
+        public String displayName = "";
+        public Map<String, String> offers = new LinkedHashMap<>();
+        public Map<String, String> buybacks = new LinkedHashMap<>();
+    }
+
+    private static Map<String, MerchantTypeConfig> defaultMerchants() {
+        Map<String, MerchantTypeConfig> map = new LinkedHashMap<>();
+
+        // Farmer — seeds, crops, farm produce
+        MerchantTypeConfig farmer = new MerchantTypeConfig();
+        farmer.displayName = "Sky Farmer";
+        farmer.offers.put("wheat_seeds", "minecraft:wheat_seeds:8:5");
+        farmer.offers.put("melon_seeds", "minecraft:melon_seeds:4:10");
+        farmer.offers.put("pumpkin_seeds", "minecraft:pumpkin_seeds:4:10");
+        farmer.offers.put("beetroot_seeds", "minecraft:beetroot_seeds:8:10");
+        farmer.offers.put("carrot", "minecraft:carrot:8:12");
+        farmer.offers.put("potato", "minecraft:potato:8:12");
+        farmer.offers.put("bone_meal", "minecraft:bone_meal:8:20");
+        farmer.offers.put("cocoa_beans", "minecraft:cocoa_beans:4:25");
+        farmer.offers.put("hay_block", "minecraft:hay_block:4:60");
+        farmer.buybacks.put("wheat", "minecraft:wheat:16:8");
+        farmer.buybacks.put("carrot", "minecraft:carrot:16:8");
+        farmer.buybacks.put("potato", "minecraft:potato:16:8");
+        farmer.buybacks.put("melon_slice", "minecraft:melon_slice:16:10");
+        farmer.buybacks.put("pumpkin", "minecraft:pumpkin:4:15");
+        farmer.buybacks.put("beetroot", "minecraft:beetroot:16:10");
+        farmer.buybacks.put("apple", "minecraft:apple:4:20");
+        map.put("farmer", farmer);
+
+        // Miner — stone, ores, ingots
+        MerchantTypeConfig miner = new MerchantTypeConfig();
+        miner.displayName = "Sky Miner";
+        miner.offers.put("cobblestone_stack", "minecraft:cobblestone:64:10");
+        miner.offers.put("stone_stack", "minecraft:stone:64:12");
+        miner.offers.put("coal", "minecraft:coal:16:30");
+        miner.offers.put("iron_ingot", "minecraft:iron_ingot:1:30");
+        miner.offers.put("gold_ingot", "minecraft:gold_ingot:1:60");
+        miner.offers.put("redstone", "minecraft:redstone:8:20");
+        miner.offers.put("lapis_lazuli", "minecraft:lapis_lazuli:8:25");
+        miner.offers.put("diamond", "minecraft:diamond:1:150");
+        miner.offers.put("emerald", "minecraft:emerald:1:200");
+        miner.offers.put("obsidian", "minecraft:obsidian:1:40");
+        miner.buybacks.put("cobblestone", "minecraft:cobblestone:64:5");
+        miner.buybacks.put("coal", "minecraft:coal:16:15");
+        miner.buybacks.put("iron_ingot", "minecraft:iron_ingot:1:15");
+        miner.buybacks.put("gold_ingot", "minecraft:gold_ingot:1:30");
+        miner.buybacks.put("diamond", "minecraft:diamond:1:75");
+        miner.buybacks.put("emerald", "minecraft:emerald:1:100");
+        map.put("miner", miner);
+
+        // Adventurer — combat, exploration, mob loot
+        MerchantTypeConfig adventurer = new MerchantTypeConfig();
+        adventurer.displayName = "Sky Adventurer";
+        adventurer.offers.put("torch", "minecraft:torch:16:15");
+        adventurer.offers.put("bread", "minecraft:bread:8:20");
+        adventurer.offers.put("water_bucket", "minecraft:water_bucket:1:80");
+        adventurer.offers.put("lava_bucket", "minecraft:lava_bucket:1:80");
+        adventurer.offers.put("ender_pearl", "minecraft:ender_pearl:1:100");
+        adventurer.offers.put("blaze_rod", "minecraft:blaze_rod:1:120");
+        adventurer.offers.put("string", "minecraft:string:8:20");
+        adventurer.offers.put("gunpowder", "minecraft:gunpowder:4:25");
+        adventurer.buybacks.put("rotten_flesh", "minecraft:rotten_flesh:16:5");
+        adventurer.buybacks.put("bone", "minecraft:bone:8:10");
+        adventurer.buybacks.put("string", "minecraft:string:8:12");
+        adventurer.buybacks.put("gunpowder", "minecraft:gunpowder:4:15");
+        adventurer.buybacks.put("blaze_rod", "minecraft:blaze_rod:1:60");
+        adventurer.buybacks.put("ender_pearl", "minecraft:ender_pearl:1:50");
+        adventurer.buybacks.put("spider_eye", "minecraft:spider_eye:8:12");
+        map.put("adventurer", adventurer);
+
+        // General — everything else + basic building blocks
+        MerchantTypeConfig general = new MerchantTypeConfig();
+        general.displayName = "Sky Merchant";
+        general.offers.put("dirt_stack", "minecraft:dirt:64:5");
+        general.offers.put("oak_log_stack", "minecraft:oak_log:16:25");
+        general.offers.put("sand_stack", "minecraft:sand:32:15");
+        general.offers.put("bookshelf", "minecraft:bookshelf:1:30");
+        general.offers.put("book", "minecraft:book:4:20");
+        general.offers.put("chest", "minecraft:chest:1:15");
+        general.buybacks.put("oak_log", "minecraft:oak_log:16:12");
+        general.buybacks.put("dirt", "minecraft:dirt:64:2");
+        general.buybacks.put("sand", "minecraft:sand:32:8");
+        map.put("general", general);
+
         return map;
     }
 
@@ -100,17 +174,7 @@ public class SkyblockCraftConfig {
 
     // === DEBUG (disabled by default in public builds, enabled in debug builds) ===
 
-    /**
-     * [DEBUG] Enables /skyblock debug ... commands (givecoins, setbalance, teleport, etc.).
-     * DISABLE for production servers — otherwise any OP could cheat with debug commands.
-     * Default depends on build type (public = false, debug = true).
-     */
     public boolean enableDebugCommands = SkyblockCraft.isDebugBuild();
-
-    /**
-     * [DEBUG] If true, regenerating an existing island via /island create is allowed
-     * without confirmation. Useful for testing the generator.
-     */
     public boolean debugAllowIslandOverride = SkyblockCraft.isDebugBuild();
 
     // === Methods ===
@@ -126,10 +190,12 @@ public class SkyblockCraftConfig {
                 SkyblockCraftConfig loaded = GSON.fromJson(json, SkyblockCraftConfig.class);
                 if (loaded != null) {
                     INSTANCE = loaded;
-                    // Guard against null map after deserialization
-                    if (INSTANCE.merchantOffers == null) {
-                        INSTANCE.merchantOffers = defaultOffers();
+                    // Guard against nulls after deserialization
+                    if (INSTANCE.merchants == null) {
+                        INSTANCE.merchants = defaultMerchants();
                     }
+                    // Migrate legacy flat merchantOffers into merchants.general.offers
+                    migrateLegacyOffers(INSTANCE);
                 }
                 SkyblockCraft.LOGGER.info("[Config] Configuration loaded from {}", CONFIG_PATH);
             } else {
@@ -140,10 +206,7 @@ public class SkyblockCraftConfig {
             SkyblockCraft.LOGGER.error("[Config] Loading error: {}", e.getMessage());
         }
 
-        // SECURITY: in PUBLIC builds, debug flags are FORCED to false at runtime
-        // regardless of what the config file contains. This prevents anyone from
-        // bypassing the public/debug build distinction by editing the JSON.
-        // To use debug features, the DEBUG build must be installed instead.
+        // SECURITY: PUBLIC builds force debug flags to false regardless of config file.
         if (!SkyblockCraft.isDebugBuild()) {
             boolean wasModified = false;
             if (INSTANCE.enableDebugCommands) {
@@ -159,6 +222,28 @@ public class SkyblockCraftConfig {
                 SkyblockCraft.LOGGER.warn("[Config] ⚠ they are IGNORED. To use debug features, install the DEBUG build.");
             }
         }
+    }
+
+    /**
+     * Migrates the v0.1 legacy `merchantOffers` (flat map) into the new
+     * `merchants.general.offers` structure. Runs on load, only if the legacy map
+     * is populated and the general merchant has no offers yet.
+     */
+    private static void migrateLegacyOffers(SkyblockCraftConfig cfg) {
+        if (cfg.merchantOffers == null || cfg.merchantOffers.isEmpty()) return;
+        MerchantTypeConfig general = cfg.merchants.computeIfAbsent("general", k -> {
+            MerchantTypeConfig m = new MerchantTypeConfig();
+            m.displayName = "Sky Merchant";
+            return m;
+        });
+        if (general.offers != null && !general.offers.isEmpty()) {
+            SkyblockCraft.LOGGER.info("[Config] Legacy merchantOffers found but merchants.general.offers already populated — skipping migration");
+            return;
+        }
+        general.offers = new LinkedHashMap<>(cfg.merchantOffers);
+        SkyblockCraft.LOGGER.info("[Config] Migrated {} legacy merchantOffers into merchants.general.offers", cfg.merchantOffers.size());
+        cfg.merchantOffers = null; // wipe legacy field so it won't be re-serialized
+        save();
     }
 
     public static void save() {

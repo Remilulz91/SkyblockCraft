@@ -88,7 +88,13 @@ public class DebugCommand {
         src.sendFeedback(() -> Text.literal("Build type: DEBUG").formatted(Formatting.GRAY), false);
         src.sendFeedback(() -> Text.literal("enableDebugCommands: " + SkyblockCraftConfig.get().enableDebugCommands).formatted(Formatting.GRAY), false);
         src.sendFeedback(() -> Text.literal("debugAllowIslandOverride: " + SkyblockCraftConfig.get().debugAllowIslandOverride).formatted(Formatting.GRAY), false);
-        src.sendFeedback(() -> Text.literal("merchantOffers loaded: " + fr.skyblockcraft.merchant.SkyMerchantManager.getOffers().size()).formatted(Formatting.GRAY), false);
+        int totalOffers = 0, totalBuybacks = 0;
+        for (fr.skyblockcraft.merchant.MerchantType t : fr.skyblockcraft.merchant.MerchantType.values()) {
+            totalOffers += fr.skyblockcraft.merchant.SkyMerchantManager.getOfferSet(t).getOffers().size();
+            totalBuybacks += fr.skyblockcraft.merchant.SkyMerchantManager.getOfferSet(t).getBuybacks().size();
+        }
+        final int fo = totalOffers, fb = totalBuybacks;
+        src.sendFeedback(() -> Text.literal("merchants: " + fo + " offers, " + fb + " buybacks").formatted(Formatting.GRAY), false);
         return 1;
     }
 }

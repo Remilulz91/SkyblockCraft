@@ -48,15 +48,31 @@
   "skyblockcraft.island.visits_disabled": "Les visites d'îles sont désactivées sur ce serveur.",
   "skyblockcraft.island.deleted_admin": "Île de %s supprimée.",
 
-  "skyblockcraft.merchant.your_balance": "Votre solde : %d coins",
-  "skyblockcraft.merchant.no_offers": "Aucune offre disponible pour le moment.",
-  "skyblockcraft.merchant.hover_buy": "Cliquer pour acheter l'offre : %s",
-  "skyblockcraft.merchant.unknown_offer": "Offre inconnue : %s",
-  "skyblockcraft.merchant.not_enough": "Pas assez de coins (besoin de %d, vous avez %d).",
-  "skyblockcraft.merchant.bought": "Acheté %d× %s pour %d coins. Nouveau solde : %d.",
+  "skyblockcraft.merchant.type.farmer": "Fermier Céleste",
+  "skyblockcraft.merchant.type.miner": "Mineur Céleste",
+  "skyblockcraft.merchant.type.adventurer": "Aventurier Céleste",
+  "skyblockcraft.merchant.type.general": "Marchand Céleste",
 
-  "skyblockcraft.command.merchant_spawned": "Sky Merchant apparu à %d, %d, %d.",
-  "skyblockcraft.command.reloaded": "Configuration rechargée (%d offres marchand).",
+  "skyblockcraft.merchant.tab.buy": "ACHETER",
+  "skyblockcraft.merchant.tab.sell": "VENDRE",
+  "skyblockcraft.merchant.tab.active": "Onglet actif",
+  "skyblockcraft.merchant.tab.switch": "Cliquer pour changer",
+
+  "skyblockcraft.merchant.lore.price_buy": "Prix : %d coins",
+  "skyblockcraft.merchant.lore.price_sell": "Reçoit : %d coins",
+  "skyblockcraft.merchant.lore.click_buy": "▶ Cliquer pour acheter",
+  "skyblockcraft.merchant.lore.click_sell": "▶ Cliquer pour vendre",
+
+  "skyblockcraft.merchant.unknown_offer": "Offre inconnue : %s",
+  "skyblockcraft.merchant.unknown_buyback": "Rachat inconnu : %s",
+  "skyblockcraft.merchant.not_enough": "Pas assez de coins (besoin de %d, vous avez %d).",
+  "skyblockcraft.merchant.not_enough_items": "Il vous faut %d× %s pour vendre (vous en avez %d).",
+  "skyblockcraft.merchant.bought": "Acheté %d× %s pour %d coins. Nouveau solde : %d.",
+  "skyblockcraft.merchant.sold": "Vendu %d× %s pour %d coins. Nouveau solde : %d.",
+
+  "skyblockcraft.command.merchant_spawned": "%s apparu à %d, %d, %d.",
+  "skyblockcraft.command.unknown_merchant_type": "Type de marchand inconnu : %s. Types valides : farmer, miner, adventurer, general.",
+  "skyblockcraft.command.reloaded": "Configuration rechargée (%d offres, %d rachats).",
 
   "entity.skyblockcraft.sky_merchant": "Sky Merchant"
 }

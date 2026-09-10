@@ -2,6 +2,25 @@
 
 All notable changes to SkyblockCraft will be documented in this file.
 
+## [0.2.0-alpha.1] — 2026-09-10
+
+Merchant overhaul: real GUI, sell system, and multiple merchant types.
+
+### Added
+- **Real GUI for the Sky Merchant** (`MerchantScreenHandler` + `MerchantScreen`): a 6-row chest-style window with a **BUY** tab (green, top-left) and a **SELL** tab (gold, top-right). Each offer slot shows the item, price in lore, and clicks to buy/sell.
+- **Sell system**: merchants now have buybacks in addition to offers. In SELL mode, clicking an item icon removes the required stack from your inventory and credits the coins. Message and localization keys for `sold` / `not_enough_items` / `unknown_buyback`.
+- **Four merchant types**: `farmer` (seeds, crops, farm produce), `miner` (stone, ores, ingots), `adventurer` (torches, food, mob loot), `general` (everything else + building blocks). Each type has its own offers + buybacks in the config.
+- **Type-specific spawn command**: `/skyblock spawn merchant <type>` (with tab completion of the four types). The old `/skyblock spawn merchant` without a type argument no longer works — pick a type.
+
+### Changed
+- **Config structure**: `merchantOffers` (flat map) → `merchants: { <type>: { displayName, offers, buybacks } }`. The legacy flat `merchantOffers` is auto-migrated into `merchants.general.offers` on the first load.
+- **Merchants track their type**: each spawned merchant now has a `skyblockcraft_type_<id>` command tag in addition to the base `skyblockcraft_sky_merchant` tag. The right-click interaction opens the shop with the correct offers.
+- **`/skyblock reload` output** now shows both offers and buybacks counts.
+
+### Removed
+- **`/skyblock buy <offerId>`**: obsolete now that clicks happen inside the GUI. Removed from the command tree.
+- **Chat-based shop menu**: replaced by the GUI.
+
 ## [0.1.0-alpha.2] — 2026-09-10
 
 ### Fixed

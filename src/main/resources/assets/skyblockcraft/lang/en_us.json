@@ -48,15 +48,31 @@
   "skyblockcraft.island.visits_disabled": "Island visits are disabled on this server.",
   "skyblockcraft.island.deleted_admin": "Deleted island record for %s.",
 
-  "skyblockcraft.merchant.your_balance": "Your balance: %d coins",
-  "skyblockcraft.merchant.no_offers": "No offers available right now.",
-  "skyblockcraft.merchant.hover_buy": "Click to buy offer: %s",
-  "skyblockcraft.merchant.unknown_offer": "Unknown offer: %s",
-  "skyblockcraft.merchant.not_enough": "Not enough coins (need %d, you have %d).",
-  "skyblockcraft.merchant.bought": "Bought %d× %s for %d coins. New balance: %d.",
+  "skyblockcraft.merchant.type.farmer": "Sky Farmer",
+  "skyblockcraft.merchant.type.miner": "Sky Miner",
+  "skyblockcraft.merchant.type.adventurer": "Sky Adventurer",
+  "skyblockcraft.merchant.type.general": "Sky Merchant",
 
-  "skyblockcraft.command.merchant_spawned": "Sky Merchant spawned at %d, %d, %d.",
-  "skyblockcraft.command.reloaded": "Configuration reloaded (%d merchant offers).",
+  "skyblockcraft.merchant.tab.buy": "BUY",
+  "skyblockcraft.merchant.tab.sell": "SELL",
+  "skyblockcraft.merchant.tab.active": "Active tab",
+  "skyblockcraft.merchant.tab.switch": "Click to switch",
+
+  "skyblockcraft.merchant.lore.price_buy": "Price: %d coins",
+  "skyblockcraft.merchant.lore.price_sell": "Receive: %d coins",
+  "skyblockcraft.merchant.lore.click_buy": "▶ Click to buy",
+  "skyblockcraft.merchant.lore.click_sell": "▶ Click to sell",
+
+  "skyblockcraft.merchant.unknown_offer": "Unknown offer: %s",
+  "skyblockcraft.merchant.unknown_buyback": "Unknown buyback: %s",
+  "skyblockcraft.merchant.not_enough": "Not enough coins (need %d, you have %d).",
+  "skyblockcraft.merchant.not_enough_items": "You need %d× %s to sell (you have %d).",
+  "skyblockcraft.merchant.bought": "Bought %d× %s for %d coins. New balance: %d.",
+  "skyblockcraft.merchant.sold": "Sold %d× %s for %d coins. New balance: %d.",
+
+  "skyblockcraft.command.merchant_spawned": "%s spawned at %d, %d, %d.",
+  "skyblockcraft.command.unknown_merchant_type": "Unknown merchant type: %s. Valid types: farmer, miner, adventurer, general.",
+  "skyblockcraft.command.reloaded": "Configuration reloaded (%d offers, %d buybacks).",
 
   "entity.skyblockcraft.sky_merchant": "Sky Merchant"
 }

@@ -2,73 +2,84 @@ package fr.skyblockcraft.merchant;
 
 import fr.skyblockcraft.SkyblockCraft;
 import fr.skyblockcraft.config.SkyblockCraftConfig;
+import fr.skyblockcraft.config.SkyblockCraftConfig.MerchantTypeConfig;
 import fr.skyblockcraft.economy.EconomyManager;
+import fr.skyblockcraft.merchant.screen.MerchantScreenHandler;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.entity.Entity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * Manages Sky Merchant offers (loaded from config), the right-click interaction
- * that opens the chat-based shop, and the purchase logic.
- *
- * For the v0.1 prototype, the shop is rendered as a chat menu with clickable
- * text components. Right-clicking a villager tagged "SkyMerchant" sends the menu
- * to the player. Clicking a "[BUY]" link runs /skyblock buy <offerId>.
+ * Central registry for the mod's Sky Merchants. Handles:
+ *   - Loading per-type {@link MerchantOfferSet} from the config
+ *   - Tagging entities as merchants of a given {@link MerchantType}
+ *   - Opening the {@link MerchantScreenHandler} GUI when a merchant is clicked
+ *   - Buy and sell logic backed by {@link EconomyManager}
  */
 public class SkyMerchantManager {
 
-    /** Vanilla "command tag" we attach to an entity to mark it as a Sky Merchant. */
+    /** Marker tag: any entity with this tag is a Sky Merchant. */
     public static final String SKY_MERCHANT_TAG = "skyblockcraft_sky_merchant";
 
-    private static final Map<String, SkyMerchantOffer> OFFERS = new LinkedHashMap<>();
+    private static final Map<MerchantType, MerchantOfferSet> SETS = new EnumMap<>(MerchantType.class);
 
     public static void loadOffers() {
-        OFFERS.clear();
-        Map<String, String> configOffers = SkyblockCraftConfig.get().merchantOffers;
-        if (configOffers == null) return;
-
-        for (Map.Entry<String, String> e : configOffers.entrySet()) {
-            SkyMerchantOffer offer = SkyMerchantOffer.parse(e.getKey(), e.getValue());
-            if (offer != null) {
-                OFFERS.put(offer.id(), offer);
-            }
+        SETS.clear();
+        Map<String, MerchantTypeConfig> configMerchants = SkyblockCraftConfig.get().merchants;
+        if (configMerchants == null) {
+            SkyblockCraft.LOGGER.warn("[Merchant] merchants config is null, no offers loaded");
+            return;
         }
-        SkyblockCraft.LOGGER.info("[Merchant] Loaded {} valid offers", OFFERS.size());
+
+        int totalOffers = 0;
+        int totalBuybacks = 0;
+        for (MerchantType type : MerchantType.values()) {
+            MerchantOfferSet set = new MerchantOfferSet(type);
+            MerchantTypeConfig cfg = configMerchants.get(type.getId());
+            if (cfg != null) {
+                set.loadOffers(cfg.offers);
+                set.loadBuybacks(cfg.buybacks);
+                totalOffers += set.getOffers().size();
+                totalBuybacks += set.getBuybacks().size();
+            }
+            SETS.put(type, set);
+        }
+        SkyblockCraft.LOGGER.info("[Merchant] Loaded {} offers and {} buybacks across {} types",
+                totalOffers, totalBuybacks, MerchantType.values().length);
     }
 
-    public static Map<String, SkyMerchantOffer> getOffers() {
-        return OFFERS;
+    public static MerchantOfferSet getOfferSet(MerchantType type) {
+        return SETS.computeIfAbsent(type, MerchantOfferSet::new);
     }
 
-    public static SkyMerchantOffer getOffer(String id) {
-        return OFFERS.get(id);
-    }
-
-    // ---- Marking an entity as a Sky Merchant ----
+    // ---- Marking an entity as a merchant of a given type ----
 
     /**
-     * Marks the given entity as a Sky Merchant (will respond to right-click with the shop).
-     * Uses vanilla scoreboard tags via {@link Entity#addCommandTag(String)} so the
-     * marker persists with the entity and survives chunk reloads.
+     * Marks the entity with the base merchant tag AND the type-specific tag,
+     * and applies a friendly display name derived from the type's config.
      */
-    public static void markAsMerchant(Entity entity) {
+    public static void markAsMerchant(Entity entity, MerchantType type) {
         entity.addCommandTag(SKY_MERCHANT_TAG);
-        // Apply a friendly display name and make it visible
-        entity.setCustomName(Text.literal(SkyblockCraftConfig.get().merchantDisplayName)
+        // Remove any existing type tag before setting the new one
+        for (MerchantType t : MerchantType.values()) {
+            entity.removeCommandTag(t.getEntityTag());
+        }
+        entity.addCommandTag(type.getEntityTag());
+
+        String displayName = getDisplayName(type);
+        entity.setCustomName(Text.literal(displayName)
                 .formatted(Formatting.YELLOW, Formatting.BOLD));
         entity.setCustomNameVisible(true);
     }
@@ -77,7 +88,26 @@ public class SkyMerchantManager {
         return entity.getCommandTags().contains(SKY_MERCHANT_TAG);
     }
 
-    // ---- Interaction handler ----
+    /** Returns the merchant type of the entity, or null if not a merchant / no type. */
+    public static MerchantType getMerchantType(Entity entity) {
+        for (MerchantType t : MerchantType.values()) {
+            if (entity.getCommandTags().contains(t.getEntityTag())) return t;
+        }
+        return null;
+    }
+
+    private static String getDisplayName(MerchantType type) {
+        Map<String, MerchantTypeConfig> merchants = SkyblockCraftConfig.get().merchants;
+        if (merchants != null) {
+            MerchantTypeConfig cfg = merchants.get(type.getId());
+            if (cfg != null && cfg.displayName != null && !cfg.displayName.isEmpty()) {
+                return cfg.displayName;
+            }
+        }
+        return type.getDefaultDisplayName();
+    }
+
+    // ---- Interaction: right-click a merchant opens the GUI ----
 
     public static void registerInteractionHandler() {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
@@ -85,71 +115,31 @@ public class SkyMerchantManager {
             if (!(player instanceof ServerPlayerEntity sp)) return ActionResult.PASS;
             if (!isMerchant(entity)) return ActionResult.PASS;
 
-            // Show the shop menu, swallow the vanilla interaction
-            sendShopMenu(sp);
+            MerchantType type = getMerchantType(entity);
+            if (type == null) type = MerchantType.GENERAL; // legacy merchants without type tag
+            openShop(sp, type);
             return ActionResult.SUCCESS;
         });
     }
 
-    public static void sendShopMenu(ServerPlayerEntity player) {
-        MinecraftServer server = player.getServer();
-        if (server == null) return;
-        long balance = EconomyManager.get(server).getBalance(player.getUuid());
-
-        player.sendMessage(
-                Text.literal("═══════ ").formatted(Formatting.GOLD)
-                        .append(Text.literal(SkyblockCraftConfig.get().merchantDisplayName).formatted(Formatting.YELLOW, Formatting.BOLD))
-                        .append(Text.literal(" ═══════").formatted(Formatting.GOLD)),
-                false
+    public static void openShop(ServerPlayerEntity player, MerchantType type) {
+        final MerchantType finalType = type;
+        String displayName = getDisplayName(type);
+        NamedScreenHandlerFactory factory = new SimpleNamedScreenHandlerFactory(
+                (syncId, playerInv, playerEntity) -> new MerchantScreenHandler(syncId, playerInv, finalType),
+                Text.literal(displayName)
         );
-        player.sendMessage(
-                Text.translatable("skyblockcraft.merchant.your_balance", balance).formatted(Formatting.AQUA),
-                false
-        );
-        player.sendMessage(Text.literal("─────────────────────────").formatted(Formatting.DARK_GRAY), false);
-
-        if (OFFERS.isEmpty()) {
-            player.sendMessage(Text.translatable("skyblockcraft.merchant.no_offers").formatted(Formatting.RED), false);
-            return;
-        }
-
-        for (SkyMerchantOffer offer : OFFERS.values()) {
-            MutableText line = Text.literal(" • ").formatted(Formatting.GRAY)
-                    .append(Text.literal(offer.count() + "× ").formatted(Formatting.WHITE))
-                    .append(offer.item().getName().copy().formatted(Formatting.GREEN))
-                    .append(Text.literal(" — ").formatted(Formatting.GRAY))
-                    .append(Text.literal(offer.priceCoins() + " coins").formatted(Formatting.GOLD))
-                    .append(Text.literal(" "))
-                    .append(Text.literal("[BUY]")
-                            .setStyle(Style.EMPTY
-                                    .withColor(Formatting.AQUA)
-                                    .withBold(true)
-                                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skyblock buy " + offer.id()))
-                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                            Text.translatable("skyblockcraft.merchant.hover_buy", offer.id())))));
-            player.sendMessage(line, false);
-        }
-        player.sendMessage(Text.literal("─────────────────────────").formatted(Formatting.DARK_GRAY), false);
+        player.openHandledScreen(factory);
     }
 
-    // ---- Purchase logic ----
+    // ---- Buy ----
 
-    /**
-     * Attempts to buy the offer for the given player.
-     * Returns a result code:
-     *   1 = success
-     *   0 = generic fail
-     *  -1 = unknown offer
-     *  -2 = not enough coins
-     *  -3 = inventory full
-     */
-    public static int buy(ServerPlayerEntity player, String offerId) {
-        SkyMerchantOffer offer = OFFERS.get(offerId);
+    public static int buy(ServerPlayerEntity player, MerchantType type, String offerId) {
+        SkyMerchantOffer offer = getOfferSet(type).getOffer(offerId);
         if (offer == null) {
             player.sendMessage(Text.translatable("skyblockcraft.merchant.unknown_offer", offerId).formatted(Formatting.RED), false);
             return -1;
         }
-
         MinecraftServer server = player.getServer();
         if (server == null) return 0;
         EconomyManager eco = EconomyManager.get(server);
@@ -163,29 +153,89 @@ public class SkyMerchantManager {
             return -2;
         }
 
-        // Try to give the item. insertStack mutates the stack (consumes count as it inserts).
+        // Give the item (insertStack mutates the stack)
         ItemStack stack = offer.newStack();
         player.getInventory().insertStack(stack);
         if (!stack.isEmpty()) {
-            // Inventory was full — drop the remainder at the player's feet
             player.dropItem(stack, false);
         }
-
-        // Charge coins
         eco.tryRemove(player.getUuid(), offer.priceCoins());
 
         long newBalance = eco.getBalance(player.getUuid());
         player.sendMessage(
                 Text.translatable("skyblockcraft.merchant.bought",
-                        offer.count(), offer.item().getName().copy(), offer.priceCoins(), newBalance).formatted(Formatting.GREEN),
+                        offer.count(), offer.item().getName().copy(), offer.priceCoins(), newBalance)
+                        .formatted(Formatting.GREEN),
                 false
         );
         return 1;
     }
 
-    // ---- List for debugging / config ----
+    // ---- Sell ----
 
-    public static List<String> listOfferIds() {
-        return new ArrayList<>(OFFERS.keySet());
+    /**
+     * Attempts to sell {@code offer.count()} of the buyback's item from the
+     * player's inventory to the merchant, crediting them the price in coins.
+     */
+    public static int sell(ServerPlayerEntity player, MerchantType type, String offerId) {
+        SkyMerchantOffer buyback = getOfferSet(type).getBuyback(offerId);
+        if (buyback == null) {
+            player.sendMessage(Text.translatable("skyblockcraft.merchant.unknown_buyback", offerId).formatted(Formatting.RED), false);
+            return -1;
+        }
+        MinecraftServer server = player.getServer();
+        if (server == null) return 0;
+
+        int required = buyback.count();
+        int available = countItems(player.getInventory(), buyback.item().getDefaultStack());
+        if (available < required) {
+            player.sendMessage(
+                    Text.translatable("skyblockcraft.merchant.not_enough_items",
+                            required, buyback.item().getName().copy(), available).formatted(Formatting.RED),
+                    false
+            );
+            return -2;
+        }
+
+        // Remove the items
+        removeItems(player.getInventory(), buyback.item().getDefaultStack(), required);
+        // Credit coins
+        EconomyManager eco = EconomyManager.get(server);
+        long newBalance = eco.add(player.getUuid(), buyback.priceCoins());
+
+        player.sendMessage(
+                Text.translatable("skyblockcraft.merchant.sold",
+                        buyback.count(), buyback.item().getName().copy(), buyback.priceCoins(), newBalance)
+                        .formatted(Formatting.GREEN),
+                false
+        );
+        return 1;
+    }
+
+    /** Counts how many items of the same type as {@code sample} are in the inventory. */
+    private static int countItems(Inventory inv, ItemStack sample) {
+        int total = 0;
+        for (int i = 0; i < inv.size(); i++) {
+            ItemStack s = inv.getStack(i);
+            if (!s.isEmpty() && ItemStack.areItemsEqual(s, sample)) {
+                total += s.getCount();
+            }
+        }
+        return total;
+    }
+
+    /** Removes up to {@code amount} items of type {@code sample} from the inventory. */
+    private static void removeItems(Inventory inv, ItemStack sample, int amount) {
+        int remaining = amount;
+        for (int i = 0; i < inv.size() && remaining > 0; i++) {
+            ItemStack s = inv.getStack(i);
+            if (!s.isEmpty() && ItemStack.areItemsEqual(s, sample)) {
+                int take = Math.min(s.getCount(), remaining);
+                s.decrement(take);
+                remaining -= take;
+                if (s.isEmpty()) inv.setStack(i, ItemStack.EMPTY);
+            }
+        }
+        if (inv instanceof PlayerInventory pi) pi.markDirty();
     }
 }

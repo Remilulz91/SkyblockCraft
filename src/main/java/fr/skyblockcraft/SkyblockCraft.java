@@ -7,6 +7,7 @@ import fr.skyblockcraft.config.SkyblockCraftConfig;
 import fr.skyblockcraft.economy.EconomyManager;
 import fr.skyblockcraft.island.IslandManager;
 import fr.skyblockcraft.merchant.SkyMerchantManager;
+import fr.skyblockcraft.merchant.screen.ModScreenHandlers;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -57,22 +58,23 @@ public class SkyblockCraft implements ModInitializer {
         SkyblockCraftConfig.load();
         LOGGER.info("[SkyblockCraft] Configuration loaded");
 
-        // 2. Load merchant offers from config
-        SkyMerchantManager.loadOffers();
-        LOGGER.info("[SkyblockCraft] Merchant offers loaded ({} offers)",
-                SkyMerchantManager.getOffers().size());
+        // 2. Register screen handlers (needed on both server and client)
+        ModScreenHandlers.register();
 
-        // 3. Register commands (/island, /balance, /pay, /skyblock, /skyblock debug)
+        // 3. Load merchant offers from config
+        SkyMerchantManager.loadOffers();
+
+        // 4. Register commands (/island, /balance, /pay, /skyblock, /skyblock debug)
         CommandRegistrationCallback.EVENT.register(IslandCommand::register);
         CommandRegistrationCallback.EVENT.register(EconomyCommand::register);
         CommandRegistrationCallback.EVENT.register(SkyblockCommand::register);
         LOGGER.info("[SkyblockCraft] Commands registered");
 
-        // 4. Register merchant interaction listener (right-click on Sky Merchants)
+        // 5. Register merchant interaction listener (right-click on Sky Merchants)
         SkyMerchantManager.registerInteractionHandler();
         LOGGER.info("[SkyblockCraft] Merchant interaction handler registered");
 
-        // 5. Server lifecycle: ensure persistent state is loaded for each world
+        // 6. Server lifecycle: ensure persistent state is loaded for each world
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             // Force-load economy and island state so they are available immediately
             EconomyManager.get(server);

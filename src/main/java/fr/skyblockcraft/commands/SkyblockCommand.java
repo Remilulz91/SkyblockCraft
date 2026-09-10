@@ -7,8 +7,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fr.skyblockcraft.SkyblockCraft;
 import fr.skyblockcraft.config.SkyblockCraftConfig;
+import fr.skyblockcraft.merchant.MerchantType;
 import fr.skyblockcraft.merchant.SkyMerchantManager;
-import fr.skyblockcraft.merchant.SkyMerchantOffer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.command.CommandManager;
@@ -22,35 +22,33 @@ import net.minecraft.util.math.Vec3d;
 
 /**
  * /skyblock administrative + utility commands:
- *   /skyblock spawn merchant     - OP, spawns a Sky Merchant at the player's location
- *   /skyblock buy <offerId>      - used by the [BUY] click in the chat shop
- *   /skyblock reload             - OP, reload config from disk
- *   /skyblock version            - print mod version + build type
- *   /skyblock debug ...          - DEBUG build only (see DebugCommand)
+ *   /skyblock spawn merchant <type>  - OP, spawn a Sky Merchant of the given type
+ *   /skyblock reload                 - OP, reload config from disk
+ *   /skyblock version                - print mod version + build type
+ *   /skyblock debug ...              - DEBUG build only
  */
 public class SkyblockCommand {
+
+    private static final SuggestionProvider<ServerCommandSource> MERCHANT_TYPE_SUGGESTIONS =
+            (ctx, builder) -> {
+                for (MerchantType t : MerchantType.values()) {
+                    builder.suggest(t.getId());
+                }
+                return builder.buildFuture();
+            };
 
     public static void register(
             CommandDispatcher<ServerCommandSource> dispatcher,
             net.minecraft.command.CommandRegistryAccess registryAccess,
             CommandManager.RegistrationEnvironment environment
     ) {
-        SuggestionProvider<ServerCommandSource> offerIdSuggestions = (ctx, builder) -> {
-            for (String id : SkyMerchantManager.listOfferIds()) {
-                builder.suggest(id);
-            }
-            return builder.buildFuture();
-        };
-
         dispatcher.register(CommandManager.literal("skyblock")
                 .then(CommandManager.literal("spawn")
                         .requires(src -> src.hasPermissionLevel(2))
                         .then(CommandManager.literal("merchant")
-                                .executes(SkyblockCommand::onSpawnMerchant)))
-                .then(CommandManager.literal("buy")
-                        .then(CommandManager.argument("offerId", StringArgumentType.word())
-                                .suggests(offerIdSuggestions)
-                                .executes(SkyblockCommand::onBuy)))
+                                .then(CommandManager.argument("type", StringArgumentType.word())
+                                        .suggests(MERCHANT_TYPE_SUGGESTIONS)
+                                        .executes(SkyblockCommand::onSpawnMerchant))))
                 .then(CommandManager.literal("reload")
                         .requires(src -> src.hasPermissionLevel(2))
                         .executes(SkyblockCommand::onReload))
@@ -61,6 +59,15 @@ public class SkyblockCommand {
     }
 
     private static int onSpawnMerchant(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        String typeArg = StringArgumentType.getString(ctx, "type");
+        MerchantType type = MerchantType.fromId(typeArg);
+        if (type == null) {
+            ctx.getSource().sendError(
+                    Text.translatable("skyblockcraft.command.unknown_merchant_type", typeArg)
+            );
+            return 0;
+        }
+
         ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
         ServerWorld world = (ServerWorld) player.getWorld();
         Vec3d pos = player.getPos();
@@ -72,35 +79,36 @@ public class SkyblockCommand {
             return 0;
         }
         villager.refreshPositionAndAngles(pos.x, pos.y, pos.z, player.getYaw(), 0f);
-        // Stop the villager from being attacked / wandering: make it persistent (no despawn)
         villager.setAiDisabled(true);
         villager.setInvulnerable(true);
         villager.setPersistent();
         world.spawnEntity(villager);
 
-        SkyMerchantManager.markAsMerchant(villager);
+        SkyMerchantManager.markAsMerchant(villager, type);
 
+        final MerchantType finalType = type;
         ctx.getSource().sendFeedback(
                 () -> Text.translatable("skyblockcraft.command.merchant_spawned",
-                        blockPos.getX(), blockPos.getY(), blockPos.getZ()).formatted(Formatting.GREEN),
+                        Text.translatable(finalType.getTranslationKey()),
+                        blockPos.getX(), blockPos.getY(), blockPos.getZ())
+                        .formatted(Formatting.GREEN),
                 true
         );
-        return 1;
-    }
-
-    private static int onBuy(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
-        String offerId = StringArgumentType.getString(ctx, "offerId");
-        SkyMerchantManager.buy(player, offerId);
         return 1;
     }
 
     private static int onReload(CommandContext<ServerCommandSource> ctx) {
         SkyblockCraftConfig.load();
         SkyMerchantManager.loadOffers();
-        int count = SkyMerchantManager.getOffers().size();
+        int totalOffers = 0;
+        int totalBuybacks = 0;
+        for (MerchantType t : MerchantType.values()) {
+            totalOffers += SkyMerchantManager.getOfferSet(t).getOffers().size();
+            totalBuybacks += SkyMerchantManager.getOfferSet(t).getBuybacks().size();
+        }
+        final int fo = totalOffers, fb = totalBuybacks;
         ctx.getSource().sendFeedback(
-                () -> Text.translatable("skyblockcraft.command.reloaded", count).formatted(Formatting.GREEN),
+                () -> Text.translatable("skyblockcraft.command.reloaded", fo, fb).formatted(Formatting.GREEN),
                 true
         );
         return 1;
@@ -113,10 +121,16 @@ public class SkyblockCommand {
                         .append(Text.literal("(" + buildType + " build)").formatted(Formatting.GRAY)),
                 false
         );
-        // Show offer count
-        int count = SkyMerchantManager.getOffers().size();
+        int totalOffers = 0;
+        int totalBuybacks = 0;
+        for (MerchantType t : MerchantType.values()) {
+            totalOffers += SkyMerchantManager.getOfferSet(t).getOffers().size();
+            totalBuybacks += SkyMerchantManager.getOfferSet(t).getBuybacks().size();
+        }
+        final int fo = totalOffers, fb = totalBuybacks;
         ctx.getSource().sendFeedback(
-                () -> Text.literal("  " + count + " merchant offer(s) loaded").formatted(Formatting.GRAY),
+                () -> Text.literal("  " + fo + " offer(s), " + fb + " buyback(s) loaded across "
+                        + MerchantType.values().length + " types").formatted(Formatting.GRAY),
                 false
         );
         return 1;

@@ -1,16 +1,17 @@
 # SkyblockCraft
 
 A classic Skyblock mod for Minecraft 1.21.1 (Fabric) with a virtual coin economy
-and custom Sky Merchant villagers. Generate your starter island, earn coins,
-and trade with merchants.
+and four types of Sky Merchant villagers (Farmer, Miner, Adventurer, General),
+each with their own buy and sell offers in a real chest-style GUI.
 
 ## Features
 
 - **`/island create`** — generate a classic Skyblock starter island (dirt platform, oak tree, sand + cactus, starter chest with seeds and starter items) and teleport there.
 - **`/island home`** and **`/island visit <player>`** — travel between islands.
 - **Virtual coin economy** — per-player balance persisted with the world. `/balance` to check, `/pay <player> <amount>` to transfer.
-- **Sky Merchant villagers** — spawn with `/skyblock spawn merchant` (OP), right-click for a chat-based shop with clickable `[BUY]` buttons.
-- **Configurable offers** — define shop items and prices in `config/skyblockcraft.json`, reloadable via `/skyblock reload`.
+- **Sky Merchant villagers** with four types (`farmer`, `miner`, `adventurer`, `general`), each with its own offers and buybacks. Spawn with `/skyblock spawn merchant <type>` (OP), right-click for a 6-row GUI with BUY / SELL tabs.
+- **Real chest-style GUI** — click an item to buy or sell it. Tab-switch between buy and sell modes.
+- **Configurable offers and buybacks** per type in `config/skyblockcraft.json`, reloadable via `/skyblock reload`.
 - **Mod Menu + Cloth Config** integration for an in-game config screen.
 - **Public + Debug dual build** — the public JAR strips out debug commands and refuses to re-enable them from the config file.
 
@@ -30,8 +31,8 @@ and trade with merchants.
 ## Quick start
 
 1. **`/island create`** — get your starter island.
-2. As OP: **`/skyblock spawn merchant`** to place a merchant near you.
-3. Right-click the merchant → click a `[BUY]` link to purchase.
+2. As OP: **`/skyblock spawn merchant farmer`** (or `miner`, `adventurer`, `general`) to place a merchant.
+3. Right-click the merchant → the shop GUI opens. Click any item slot to buy (BUY tab) or sell (SELL tab).
 4. **`/balance`** to check funds, **`/pay <player> <amount>`** to send coins.
 
 ## Commands
@@ -43,18 +44,17 @@ and trade with merchants.
 | `/island visit <player>` | no | Visit another player's island |
 | `/balance` (or `/bal`) | no | Show your coin balance |
 | `/pay <player> <amount>` | no | Send coins to another player |
-| `/skyblock spawn merchant` | yes | Spawn a Sky Merchant |
+| `/skyblock spawn merchant <type>` | yes | Spawn a merchant of the given type (farmer, miner, adventurer, general) |
 | `/skyblock reload` | yes | Reload `skyblockcraft.json` |
 | `/skyblock version` | no | Show mod version + build type |
 
 ## Configuration
 
-Key fields in `config/skyblockcraft.json`:
+Key sections in `config/skyblockcraft.json`:
 
 - `islandSpacing` — blocks between two player islands (default 512)
 - `startingCoins` — new player balance (default 100)
-- `merchantOffers` — map of `offer_id` → `"namespace:path:count:price"`
-- `merchantDisplayName` — name above a Sky Merchant (default `Sky Merchant`)
+- `merchants` — per-type merchant config. Each type has `displayName`, `offers` (what the merchant sells), and `buybacks` (what the merchant buys from the player). Both use the format `"offer_id": "namespace:path:count:price"`.
 
 Run `/skyblock reload` after editing.
 
