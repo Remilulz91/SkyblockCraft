@@ -13,7 +13,11 @@ import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -80,6 +84,58 @@ public class IslandManager extends PersistentState {
         if (islands.remove(playerId) != null) {
             markDirty();
         }
+    }
+
+    /** Returns the collection of all islands. Read-only view. */
+    public Collection<PlayerIsland> getAllIslands() {
+        return islands.values();
+    }
+
+    /**
+     * Returns the island whose protection zone contains the given block position,
+     * or null if the position is not on any player's island.
+     *
+     * An island's protection zone is a square of side {@code 2*protectionRadius+1}
+     * centered on the island's grid center at the ground level.
+     */
+    public PlayerIsland findIslandAt(BlockPos pos) {
+        SkyblockCraftConfig cfg = SkyblockCraftConfig.get();
+        int spacing = cfg.islandSpacing;
+        if (spacing <= 0) return null;
+
+        int localX = pos.getX() - cfg.islandsGridOriginX;
+        int localZ = pos.getZ() - cfg.islandsGridOriginZ;
+        int gridX = Math.round((float) localX / spacing);
+        int gridZ = Math.round((float) localZ / spacing);
+
+        int centerX = cfg.islandsGridOriginX + gridX * spacing;
+        int centerZ = cfg.islandsGridOriginZ + gridZ * spacing;
+        int dx = pos.getX() - centerX;
+        int dz = pos.getZ() - centerZ;
+        if (Math.abs(dx) > cfg.protectionRadius || Math.abs(dz) > cfg.protectionRadius) {
+            return null;
+        }
+        for (PlayerIsland island : islands.values()) {
+            if (island.gridX == gridX && island.gridZ == gridZ) {
+                return island;
+            }
+        }
+        return null;
+    }
+
+    /** Returns the top N islands sorted by placedBlocks descending. */
+    public List<PlayerIsland> getTopIslands(int limit) {
+        List<PlayerIsland> sorted = new ArrayList<>(islands.values());
+        sorted.sort(Comparator.comparingLong((PlayerIsland i) -> i.placedBlocks).reversed());
+        if (sorted.size() > limit) {
+            return sorted.subList(0, limit);
+        }
+        return sorted;
+    }
+
+    /** Marks the manager dirty (public accessor so IslandProtection can trigger saves). */
+    public void markDirtyPublic() {
+        markDirty();
     }
 
     /**

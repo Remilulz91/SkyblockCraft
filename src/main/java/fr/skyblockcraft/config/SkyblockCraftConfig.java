@@ -47,6 +47,19 @@ public class SkyblockCraftConfig {
     /** Allow players to visit other players' islands with /island visit. */
     public boolean allowIslandVisits = true;
 
+    /**
+     * Half-side of the square protection zone around each island's grid center.
+     * A radius of 24 gives a 49×49 protected zone (from -24 to +24 in x/z).
+     * Blocks inside this zone can only be modified by the owner or trusted players.
+     */
+    public int protectionRadius = 24;
+
+    /** Number of net placed blocks required to gain one island level. */
+    public int blocksPerLevel = 100;
+
+    /** If true, OPs (permission level 2+) can build/break on any island. */
+    public boolean opBypassIslandProtection = true;
+
     // === Economy settings ===
 
     /** Starting coin balance for a new player. */

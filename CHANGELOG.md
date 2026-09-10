@@ -2,6 +2,23 @@
 
 All notable changes to SkyblockCraft will be documented in this file.
 
+## [0.3.0-alpha.1] — 2026-09-10
+
+Complete island system: protection, co-op trust, leveling, and leaderboard.
+
+### Added
+- **Island protection**: within a configurable protection radius (default 24 blocks around the island center — a 49×49 zone), only the owner and trusted players may break or place blocks. Other players see an action bar message and their action is cancelled. Interactions (chests, doors) remain unrestricted.
+- **Co-op trust**: `/island trust <player>`, `/island untrust <player>`, `/island trusted` (list). Trusted players have the same build/break rights as the owner on that island. Both players get chat feedback when a trust changes.
+- **Island level**: each block placed by an authorized player increments the island's `placedBlocks` counter; each block broken decrements it (clamped at 0). Level = `placedBlocks / blocksPerLevel` (default 100 blocks per level). Shown via `/island level`.
+- **Leaderboard**: `/island top` (or `/is top`) lists the top 10 islands by placed-block count with owner name (resolved via UserCache for offline players) and level.
+- **OP bypass**: config `opBypassIslandProtection` (default true) — permission-level-2+ players can build/break anywhere for admin convenience. Toggleable in Mod Menu.
+
+### Configuration
+- New fields: `protectionRadius` (default 24), `blocksPerLevel` (default 100), `opBypassIslandProtection` (default true). All editable in Mod Menu.
+
+### Backward compatibility
+- v0.1/v0.2 island records without `trustedPlayers` or `placedBlocks` fields load fine: trusted list starts empty, block counter starts at 0.
+
 ## [0.2.0-alpha.2] — 2026-09-10
 
 ### Fixed

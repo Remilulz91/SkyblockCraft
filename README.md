@@ -8,9 +8,11 @@ each with their own buy and sell offers in a real chest-style GUI.
 
 - **`/island create`** — generate a classic Skyblock starter island (dirt platform, oak tree, sand + cactus, starter chest with seeds and starter items) and teleport there.
 - **`/island home`** and **`/island visit <player>`** — travel between islands.
+- **Island protection** — within a configurable radius around each island's center (default 24 blocks), only the owner and trusted co-op players can build or break. Interactions (chests, doors) remain free so visitors can look around.
+- **Co-op trust** — `/island trust <player>` gives another player build rights on your island. `/island untrust` revokes. `/island trusted` lists.
+- **Island level + leaderboard** — every block you place on your island counts toward your level (default 100 blocks per level). `/island level` shows your progress. `/island top` shows the top 10 islands.
 - **Virtual coin economy** — per-player balance persisted with the world. `/balance` to check, `/pay <player> <amount>` to transfer.
-- **Sky Merchant villagers** with four types (`farmer`, `miner`, `adventurer`, `general`), each with its own offers and buybacks. Spawn with `/skyblock spawn merchant <type>` (OP), right-click for a 6-row GUI with BUY / SELL tabs.
-- **Real chest-style GUI** — click an item to buy or sell it. Tab-switch between buy and sell modes.
+- **Sky Merchant villagers** with four types (`farmer`, `miner`, `adventurer`, `general`), each with its own offers and buybacks. Spawn with `/skyblock spawn merchant <type>` (OP), right-click for a 6-row GUI with BUY / SELL tabs. Merchants are truly invulnerable — use `/skyblock remove merchant` to remove one.
 - **Configurable offers and buybacks** per type in `config/skyblockcraft.json`, reloadable via `/skyblock reload`.
 - **Mod Menu + Cloth Config** integration for an in-game config screen.
 - **Public + Debug dual build** — the public JAR strips out debug commands and refuses to re-enable them from the config file.
@@ -42,6 +44,11 @@ each with their own buy and sell offers in a real chest-style GUI.
 | `/island create` | no | Generate your starter island |
 | `/island home` | no | Teleport to your island |
 | `/island visit <player>` | no | Visit another player's island |
+| `/island level` | no | Show your island level and placed-block count |
+| `/island top` | no | List the top 10 islands by level |
+| `/island trust <player>` | no | Allow another player to build on your island |
+| `/island untrust <player>` | no | Revoke build rights |
+| `/island trusted` | no | List players trusted on your island |
 | `/balance` (or `/bal`) | no | Show your coin balance |
 | `/pay <player> <amount>` | no | Send coins to another player |
 | `/skyblock spawn merchant <type>` | yes | Spawn a merchant of the given type (farmer, miner, adventurer, general) |
@@ -54,6 +61,9 @@ each with their own buy and sell offers in a real chest-style GUI.
 Key sections in `config/skyblockcraft.json`:
 
 - `islandSpacing` — blocks between two player islands (default 512)
+- `protectionRadius` — half-side of the protected zone around each island (default 24 → 49×49)
+- `blocksPerLevel` — blocks needed to gain one level (default 100)
+- `opBypassIslandProtection` — if true, OPs can build/break on any island (default true)
 - `startingCoins` — new player balance (default 100)
 - `merchants` — per-type merchant config. Each type has `displayName`, `offers` (what the merchant sells), and `buybacks` (what the merchant buys from the player). Both use the format `"offer_id": "namespace:path:count:price"`.
 

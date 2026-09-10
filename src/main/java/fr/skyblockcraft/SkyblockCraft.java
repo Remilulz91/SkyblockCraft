@@ -6,6 +6,7 @@ import fr.skyblockcraft.commands.SkyblockCommand;
 import fr.skyblockcraft.config.SkyblockCraftConfig;
 import fr.skyblockcraft.economy.EconomyManager;
 import fr.skyblockcraft.island.IslandManager;
+import fr.skyblockcraft.island.IslandProtection;
 import fr.skyblockcraft.merchant.SkyMerchantManager;
 import fr.skyblockcraft.merchant.screen.ModScreenHandlers;
 import net.fabricmc.api.ModInitializer;
@@ -74,7 +75,9 @@ public class SkyblockCraft implements ModInitializer {
         SkyMerchantManager.registerInteractionHandler();
         // Register merchant damage handler (makes them truly invulnerable)
         SkyMerchantManager.registerDamageHandler();
-        LOGGER.info("[SkyblockCraft] Merchant handlers registered");
+        // Register island protection (break/place restrictions on other players' islands)
+        IslandProtection.register();
+        LOGGER.info("[SkyblockCraft] Handlers registered");
 
         // 6. Server lifecycle: ensure persistent state is loaded for each world
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {

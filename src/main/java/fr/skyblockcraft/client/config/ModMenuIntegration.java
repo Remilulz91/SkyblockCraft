@@ -50,6 +50,21 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setDefaultValue(true)
                     .setSaveConsumer(v -> cfg.allowIslandVisits = v).build());
 
+            islands.addEntry(entry.startIntField(Text.translatable("config.skyblockcraft.protectionRadius"), cfg.protectionRadius)
+                    .setMin(0).setMax(256).setDefaultValue(24)
+                    .setTooltip(Text.translatable("config.skyblockcraft.protectionRadius.tooltip"))
+                    .setSaveConsumer(v -> cfg.protectionRadius = v).build());
+
+            islands.addEntry(entry.startIntField(Text.translatable("config.skyblockcraft.blocksPerLevel"), cfg.blocksPerLevel)
+                    .setMin(1).setMax(100000).setDefaultValue(100)
+                    .setTooltip(Text.translatable("config.skyblockcraft.blocksPerLevel.tooltip"))
+                    .setSaveConsumer(v -> cfg.blocksPerLevel = v).build());
+
+            islands.addEntry(entry.startBooleanToggle(Text.translatable("config.skyblockcraft.opBypassIslandProtection"), cfg.opBypassIslandProtection)
+                    .setDefaultValue(true)
+                    .setTooltip(Text.translatable("config.skyblockcraft.opBypassIslandProtection.tooltip"))
+                    .setSaveConsumer(v -> cfg.opBypassIslandProtection = v).build());
+
             // === Economy category ===
             ConfigCategory eco = builder.getOrCreateCategory(Text.translatable("config.skyblockcraft.category.economy"));
 
