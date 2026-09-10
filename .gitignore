@@ -27,6 +27,3 @@ remappedSrc/
 # OS
 .DS_Store
 Thumbs.db
-
-# Local build outputs (we want gradle-wrapper.properties tracked, not the jar)
-gradle-wrapper.jar
