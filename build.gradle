@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.7-SNAPSHOT'
     id 'maven-publish'
+    id 'me.modmuss50.mod-publish-plugin' version '0.7.4'
 }
 
 group = project.maven_group
@@ -99,5 +100,39 @@ publishing {
 
     repositories {
         // Add repositories to publish to here if needed
+    }
+}
+
+// Modrinth publishing (via mod-publish-plugin).
+// Only runs when the MODRINTH_TOKEN env var is present (i.e. in CI on tag push).
+// Release channel is derived from the version string: alpha/beta/stable.
+publishMods {
+    file = remapJar.archiveFile
+    changelog = providers.fileContents(rootProject.layout.projectDirectory.file("CHANGELOG.md"))
+            .asText.orElse("See CHANGELOG.md")
+    modLoaders.add("fabric")
+
+    def v = project.mod_version.toString()
+    if (v.contains("alpha")) {
+        type = ALPHA
+    } else if (v.contains("beta")) {
+        type = BETA
+    } else {
+        type = STABLE
+    }
+
+    modrinth {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = "tmz0xvbX" // https://modrinth.com/mod/skyblockcraft
+        minecraftVersions.add(project.minecraft_version) // exact 1.21.1 only
+        requires {
+            slug = "fabric-api"
+        }
+        optional {
+            slug = "cloth-config"
+        }
+        optional {
+            slug = "modmenu"
+        }
     }
 }

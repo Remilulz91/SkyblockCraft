@@ -8,7 +8,7 @@ All notable changes to SkyblockCraft will be documented in this file.
 - **Minecraft version compatibility**: the mod was declared compatible with all 1.21.x versions (`~1.21.1` in `fabric.mod.json`), but it only actually works on 1.21.1. Fabric Loader will now refuse to load the mod on 1.21.2 and later, preventing silent breakage on incompatible versions. Users on 1.21.2+ must downgrade to 1.21.1 or wait for a version bump of the mod.
 
 ### Added
-- **GitHub Releases workflow** (`.github/workflows/release.yml`): pushing a tag matching `v*` (e.g. `v0.1.0-alpha.2`) now builds the JAR, creates a GitHub Release with the public JAR attached, and — via the Modrinth GitHub integration — auto-publishes it to Modrinth.
+- **GitHub Releases + Modrinth auto-publish**: pushing a tag matching `v*` (e.g. `v0.1.0-alpha.2`) now builds the JAR, creates a GitHub Release, and publishes to Modrinth via the `mod-publish-plugin` (requires the `MODRINTH_TOKEN` GitHub secret).
 
 ### Changed
 - Committed `gradle-wrapper.jar` (was excluded by mistake), fixed `gradlew` executable bit for CI, upgraded to `setup-gradle@v4`.

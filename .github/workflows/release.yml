@@ -1,8 +1,9 @@
 name: Release
 
 # Triggered when a tag matching v* is pushed (e.g. v0.1.0-alpha.2, v0.2.0, v1.0.0).
-# Builds the PUBLIC JAR and creates a GitHub Release. The Modrinth GitHub
-# integration then auto-publishes the JAR to https://modrinth.com/mod/skyblockcraft.
+# Builds the PUBLIC JAR, creates a GitHub Release with it, and publishes to
+# https://modrinth.com/mod/skyblockcraft via the mod-publish-plugin (needs
+# MODRINTH_TOKEN secret set in repo settings).
 
 on:
   push:
@@ -79,3 +80,8 @@ jobs:
           prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to Modrinth
+        run: ./gradlew publishMods --stacktrace
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
