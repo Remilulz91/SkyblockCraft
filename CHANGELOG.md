@@ -2,6 +2,14 @@
 
 All notable changes to SkyblockCraft will be documented in this file.
 
+## [0.2.0-alpha.2] — 2026-09-10
+
+### Fixed
+- **Sky Merchants are now truly invulnerable**. The previous `setInvulnerable(true)` on the villager entity was bypassed by creative-mode players and by damage sources tagged as bypassing invulnerability. Now handled via `ServerLivingEntityEvents.ALLOW_DAMAGE` which cancels all damage on any merchant entity, regardless of source.
+
+### Added
+- **`/skyblock remove merchant`** (OP): removes the closest Sky Merchant within a 20-block radius of the player. Needed because merchants can no longer be killed by attacking them.
+
 ## [0.2.0-alpha.1] — 2026-09-10
 
 Merchant overhaul: real GUI, sell system, and multiple merchant types.

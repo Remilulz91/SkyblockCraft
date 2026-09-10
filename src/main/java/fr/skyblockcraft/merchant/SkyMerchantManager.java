@@ -5,6 +5,7 @@ import fr.skyblockcraft.config.SkyblockCraftConfig;
 import fr.skyblockcraft.config.SkyblockCraftConfig.MerchantTypeConfig;
 import fr.skyblockcraft.economy.EconomyManager;
 import fr.skyblockcraft.merchant.screen.MerchantScreenHandler;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -119,6 +120,21 @@ public class SkyMerchantManager {
             if (type == null) type = MerchantType.GENERAL; // legacy merchants without type tag
             openShop(sp, type);
             return ActionResult.SUCCESS;
+        });
+    }
+
+    /**
+     * Registers a damage handler that cancels ALL damage to Sky Merchants.
+     * This is stronger than Entity.setInvulnerable(true) which is bypassed by
+     * creative-mode players and certain damage types. To remove a merchant, use
+     * /skyblock remove merchant.
+     */
+    public static void registerDamageHandler() {
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
+            if (isMerchant(entity)) {
+                return false; // cancel damage entirely
+            }
+            return true;
         });
     }
 

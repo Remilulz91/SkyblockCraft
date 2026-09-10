@@ -45,6 +45,7 @@ each with their own buy and sell offers in a real chest-style GUI.
 | `/balance` (or `/bal`) | no | Show your coin balance |
 | `/pay <player> <amount>` | no | Send coins to another player |
 | `/skyblock spawn merchant <type>` | yes | Spawn a merchant of the given type (farmer, miner, adventurer, general) |
+| `/skyblock remove merchant` | yes | Remove the nearest merchant within 20 blocks (they're invulnerable) |
 | `/skyblock reload` | yes | Reload `skyblockcraft.json` |
 | `/skyblock version` | no | Show mod version + build type |
 

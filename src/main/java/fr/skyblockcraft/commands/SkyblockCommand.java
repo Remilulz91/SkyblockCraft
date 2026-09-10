@@ -9,6 +9,7 @@ import fr.skyblockcraft.SkyblockCraft;
 import fr.skyblockcraft.config.SkyblockCraftConfig;
 import fr.skyblockcraft.merchant.MerchantType;
 import fr.skyblockcraft.merchant.SkyMerchantManager;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.command.CommandManager;
@@ -18,7 +19,10 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.List;
 
 /**
  * /skyblock administrative + utility commands:
@@ -49,6 +53,10 @@ public class SkyblockCommand {
                                 .then(CommandManager.argument("type", StringArgumentType.word())
                                         .suggests(MERCHANT_TYPE_SUGGESTIONS)
                                         .executes(SkyblockCommand::onSpawnMerchant))))
+                .then(CommandManager.literal("remove")
+                        .requires(src -> src.hasPermissionLevel(2))
+                        .then(CommandManager.literal("merchant")
+                                .executes(SkyblockCommand::onRemoveMerchant)))
                 .then(CommandManager.literal("reload")
                         .requires(src -> src.hasPermissionLevel(2))
                         .executes(SkyblockCommand::onReload))
@@ -92,6 +100,45 @@ public class SkyblockCommand {
                         Text.translatable(finalType.getTranslationKey()),
                         blockPos.getX(), blockPos.getY(), blockPos.getZ())
                         .formatted(Formatting.GREEN),
+                true
+        );
+        return 1;
+    }
+
+    /**
+     * Removes the nearest Sky Merchant within 20 blocks of the player.
+     * Needed because merchants are now truly invulnerable — they can't be
+     * killed by attacking them. This is the intended cleanup path.
+     */
+    private static int onRemoveMerchant(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
+        ServerWorld world = (ServerWorld) player.getWorld();
+        Vec3d pos = player.getPos();
+        Box searchBox = new Box(pos, pos).expand(20.0);
+
+        List<Entity> nearby = world.getOtherEntities(null, searchBox, SkyMerchantManager::isMerchant);
+        if (nearby.isEmpty()) {
+            ctx.getSource().sendError(Text.translatable("skyblockcraft.command.no_merchant_nearby"));
+            return 0;
+        }
+
+        // Find the closest one
+        Entity closest = nearby.get(0);
+        double closestDist = closest.squaredDistanceTo(player);
+        for (Entity e : nearby) {
+            double d = e.squaredDistanceTo(player);
+            if (d < closestDist) {
+                closest = e;
+                closestDist = d;
+            }
+        }
+
+        BlockPos removedPos = closest.getBlockPos();
+        closest.discard();
+        ctx.getSource().sendFeedback(
+                () -> Text.translatable("skyblockcraft.command.merchant_removed",
+                        removedPos.getX(), removedPos.getY(), removedPos.getZ())
+                        .formatted(Formatting.YELLOW),
                 true
         );
         return 1;

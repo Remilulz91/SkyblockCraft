@@ -71,6 +71,8 @@
   "skyblockcraft.merchant.sold": "Sold %d× %s for %d coins. New balance: %d.",
 
   "skyblockcraft.command.merchant_spawned": "%s spawned at %d, %d, %d.",
+  "skyblockcraft.command.merchant_removed": "Removed nearest merchant at %d, %d, %d.",
+  "skyblockcraft.command.no_merchant_nearby": "No Sky Merchant found within 20 blocks.",
   "skyblockcraft.command.unknown_merchant_type": "Unknown merchant type: %s. Valid types: farmer, miner, adventurer, general.",
   "skyblockcraft.command.reloaded": "Configuration reloaded (%d offers, %d buybacks).",
 

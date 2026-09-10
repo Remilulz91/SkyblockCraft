@@ -72,7 +72,9 @@ public class SkyblockCraft implements ModInitializer {
 
         // 5. Register merchant interaction listener (right-click on Sky Merchants)
         SkyMerchantManager.registerInteractionHandler();
-        LOGGER.info("[SkyblockCraft] Merchant interaction handler registered");
+        // Register merchant damage handler (makes them truly invulnerable)
+        SkyMerchantManager.registerDamageHandler();
+        LOGGER.info("[SkyblockCraft] Merchant handlers registered");
 
         // 6. Server lifecycle: ensure persistent state is loaded for each world
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {

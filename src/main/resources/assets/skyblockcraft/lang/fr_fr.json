@@ -71,6 +71,8 @@
   "skyblockcraft.merchant.sold": "Vendu %d× %s pour %d coins. Nouveau solde : %d.",
 
   "skyblockcraft.command.merchant_spawned": "%s apparu à %d, %d, %d.",
+  "skyblockcraft.command.merchant_removed": "Marchand le plus proche retiré à %d, %d, %d.",
+  "skyblockcraft.command.no_merchant_nearby": "Aucun marchand trouvé dans un rayon de 20 blocs.",
   "skyblockcraft.command.unknown_merchant_type": "Type de marchand inconnu : %s. Types valides : farmer, miner, adventurer, general.",
   "skyblockcraft.command.reloaded": "Configuration rechargée (%d offres, %d rachats).",
 
