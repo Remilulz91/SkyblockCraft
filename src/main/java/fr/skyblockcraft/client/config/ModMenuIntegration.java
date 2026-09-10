@@ -71,11 +71,14 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setSaveConsumer(v -> cfg.minPayAmount = v).build());
 
             // === Merchant category ===
+            // Per-type display names and offers/buybacks are edited directly in
+            // config/skyblockcraft.json (nested Map structures aren't well suited
+            // to Cloth Config's flat entries). Use /skyblock reload after editing.
             ConfigCategory merchant = builder.getOrCreateCategory(Text.translatable("config.skyblockcraft.category.merchant"));
 
-            merchant.addEntry(entry.startStrField(Text.translatable("config.skyblockcraft.merchantDisplayName"), cfg.merchantDisplayName)
-                    .setDefaultValue("Sky Merchant")
-                    .setSaveConsumer(v -> cfg.merchantDisplayName = v).build());
+            merchant.addEntry(entry.startTextDescription(
+                    Text.translatable("config.skyblockcraft.merchant.edit_in_json")
+            ).build());
 
             // === UI category ===
             ConfigCategory ui = builder.getOrCreateCategory(Text.translatable("config.skyblockcraft.category.ui"));

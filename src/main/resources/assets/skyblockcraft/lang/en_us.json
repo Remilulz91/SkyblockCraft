@@ -19,7 +19,7 @@
   "config.skyblockcraft.allowPlayerPay": "Allow /pay between players",
   "config.skyblockcraft.minPayAmount": "Minimum /pay amount",
 
-  "config.skyblockcraft.merchantDisplayName": "Sky Merchant display name",
+  "config.skyblockcraft.merchant.edit_in_json": "§7Per-type merchant display names, offers and buybacks live in §econfig/skyblockcraft.json§7. Edit them there, then run §a/skyblock reload§7.",
 
   "config.skyblockcraft.showBalanceOnJoin": "Show balance on player join",
 

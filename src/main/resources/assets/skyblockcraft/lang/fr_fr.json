@@ -19,7 +19,7 @@
   "config.skyblockcraft.allowPlayerPay": "Autoriser /pay entre joueurs",
   "config.skyblockcraft.minPayAmount": "Montant minimum pour /pay",
 
-  "config.skyblockcraft.merchantDisplayName": "Nom affiché du marchand",
+  "config.skyblockcraft.merchant.edit_in_json": "§7Les noms affichés, offres et rachats par type de marchand sont dans §econfig/skyblockcraft.json§7. Modifiez-les là-bas puis lancez §a/skyblock reload§7.",
 
   "config.skyblockcraft.showBalanceOnJoin": "Afficher le solde à la connexion",
 
