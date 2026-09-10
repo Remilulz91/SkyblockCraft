@@ -52,6 +52,7 @@
   "skyblockcraft.island.visiting": "Visite de l'île de %s.",
   "skyblockcraft.island.target_no_island": "%s n'a pas d'île.",
   "skyblockcraft.island.visits_disabled": "Les visites d'îles sont désactivées sur ce serveur.",
+  "skyblockcraft.island.visit_self": "Vous ne pouvez pas visiter votre propre île.",
   "skyblockcraft.island.deleted_admin": "Île de %s supprimée.",
   "skyblockcraft.island.cant_build_here": "§cVous ne pouvez pas construire sur cette île.",
   "skyblockcraft.island.cant_break_here": "§cVous ne pouvez pas casser de blocs sur cette île.",

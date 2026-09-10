@@ -2,6 +2,11 @@
 
 All notable changes to SkyblockCraft will be documented in this file.
 
+## [0.3.0-alpha.2] — 2026-09-10
+
+### Fixed
+- **`/island visit <self>` is now rejected** with a message pointing to `/island home` instead of silently teleporting to your own island.
+
 ## [0.3.0-alpha.1] — 2026-09-10
 
 Complete island system: protection, co-op trust, leveling, and leaderboard.

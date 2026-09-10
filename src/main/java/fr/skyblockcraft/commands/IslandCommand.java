@@ -117,6 +117,11 @@ public class IslandCommand {
         }
         ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
         ServerPlayerEntity target = EntityArgumentType.getPlayer(ctx, "target");
+        if (target.getUuid().equals(player.getUuid())) {
+            player.sendMessage(Text.translatable("skyblockcraft.island.visit_self").formatted(Formatting.RED), false);
+            player.sendMessage(Text.translatable("skyblockcraft.island.use_home").formatted(Formatting.GRAY), false);
+            return 0;
+        }
         MinecraftServer server = player.getServer();
         if (server == null) return 0;
 
