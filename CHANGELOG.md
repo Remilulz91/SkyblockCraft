@@ -2,6 +2,18 @@
 
 All notable changes to SkyblockCraft will be documented in this file.
 
+## [0.1.0-alpha.2] — 2026-09-10
+
+### Fixed
+- **Minecraft version compatibility**: the mod was declared compatible with all 1.21.x versions (`~1.21.1` in `fabric.mod.json`), but it only actually works on 1.21.1. Fabric Loader will now refuse to load the mod on 1.21.2 and later, preventing silent breakage on incompatible versions. Users on 1.21.2+ must downgrade to 1.21.1 or wait for a version bump of the mod.
+
+### Added
+- **GitHub Releases workflow** (`.github/workflows/release.yml`): pushing a tag matching `v*` (e.g. `v0.1.0-alpha.2`) now builds the JAR, creates a GitHub Release with the public JAR attached, and — via the Modrinth GitHub integration — auto-publishes it to Modrinth.
+
+### Changed
+- Committed `gradle-wrapper.jar` (was excluded by mistake), fixed `gradlew` executable bit for CI, upgraded to `setup-gradle@v4`.
+- Documentation cleanup: shorter user-facing README, dev-focused SETUP.
+
 ## [0.1.0-alpha.1] — 2026-05-14
 
 Initial prototype.
