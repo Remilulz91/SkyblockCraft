@@ -16,31 +16,32 @@ import net.minecraft.util.Identifier;
  */
 public class ModBlocks {
 
+    // Generators are "utility" blocks that players place and remove often —
+    // so hardness stays low (~stone) and NO requiresTool() so they always drop
+    // the item regardless of what the player uses to break them. Blast
+    // resistance stays moderate so they survive a stray creeper.
     public static final CoinGeneratorBlock COIN_GENERATOR_BASIC = register(
             "coin_generator_basic",
             new CoinGeneratorBlock(CoinGeneratorTier.BASIC,
                     AbstractBlock.Settings.create()
-                            .strength(3.0f, 6.0f)
-                            .sounds(BlockSoundGroup.STONE)
-                            .requiresTool())
+                            .strength(1.5f, 6.0f)
+                            .sounds(BlockSoundGroup.STONE))
     );
 
     public static final CoinGeneratorBlock COIN_GENERATOR_ADVANCED = register(
             "coin_generator_advanced",
             new CoinGeneratorBlock(CoinGeneratorTier.ADVANCED,
                     AbstractBlock.Settings.create()
-                            .strength(4.0f, 8.0f)
-                            .sounds(BlockSoundGroup.METAL)
-                            .requiresTool())
+                            .strength(2.0f, 8.0f)
+                            .sounds(BlockSoundGroup.METAL))
     );
 
     public static final CoinGeneratorBlock COIN_GENERATOR_ELITE = register(
             "coin_generator_elite",
             new CoinGeneratorBlock(CoinGeneratorTier.ELITE,
                     AbstractBlock.Settings.create()
-                            .strength(5.0f, 12.0f)
-                            .sounds(BlockSoundGroup.METAL)
-                            .requiresTool())
+                            .strength(2.5f, 12.0f)
+                            .sounds(BlockSoundGroup.METAL))
     );
 
     private static <T extends Block> T register(String name, T block) {

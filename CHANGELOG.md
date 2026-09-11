@@ -2,6 +2,11 @@
 
 All notable changes to SkyblockCraft will be documented in this file.
 
+## [0.4.0-alpha.2] — 2026-09-11
+
+### Fixed
+- **Coin generators are now easy to break and always drop their item.** In alpha.1 they had `requiresTool()` set with a hardness matching emerald/diamond blocks — so breaking them was obsidian-slow AND dropped nothing without the right pickaxe. Hardness is now stone-like (1.5–2.5) and `requiresTool()` is removed, so a bare hand works and the block drops normally.
+
 ## [0.4.0-alpha.1] — 2026-09-11
 
 Coin generators — passive income blocks.
