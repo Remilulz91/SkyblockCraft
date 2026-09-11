@@ -2,6 +2,26 @@
 
 All notable changes to SkyblockCraft will be documented in this file.
 
+## [0.4.0-alpha.1] — 2026-09-11
+
+Coin generators — passive income blocks.
+
+### Added
+- **Three tiers of coin generator blocks**:
+  - **Basic** (emerald-textured) — 1 coin/min, sold for 500 coins
+  - **Advanced** (gold-textured) — 5 coins/min, sold for 3000 coins
+  - **Elite** (diamond-textured) — 15 coins/min, sold for 15000 coins
+- Each generator is a proper custom block with a block entity. When placed, it remembers the placer as its owner. Every production cycle, if the owner is online, it credits the owner's balance with the tier's coin amount. Offline owners' generators still tick but skip the payout (no infinite AFK farming).
+- **Placement restrictions**: generators can only be placed on your own island or on an island you're trusted on (enforced by the existing island protection). A per-island cap (default 5, configurable via `maxGeneratorsPerIsland`) prevents runaway inflation — extra placement attempts are rejected with an action-bar message.
+- **Merchant integration**: all three generators are added to the **General** merchant's default offers. Right-click any general merchant → BUY tab → click a generator icon.
+- Broken generators drop the block item (standard loot table), so relocation works normally.
+
+### Configuration
+- New field: `maxGeneratorsPerIsland` (default 5). Editable in Mod Menu.
+
+### Backward compatibility
+- Existing worlds keep working: no data structure changes to `IslandManager` or `EconomyManager`. Generator block entities appear only where players place them.
+
 ## [0.3.0-alpha.2] — 2026-09-10
 
 ### Fixed

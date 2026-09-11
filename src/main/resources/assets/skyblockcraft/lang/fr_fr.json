@@ -97,5 +97,11 @@
   "skyblockcraft.command.unknown_merchant_type": "Type de marchand inconnu : %s. Types valides : farmer, miner, adventurer, general.",
   "skyblockcraft.command.reloaded": "Configuration rechargée (%d offres, %d rachats).",
 
-  "entity.skyblockcraft.sky_merchant": "Sky Merchant"
+  "entity.skyblockcraft.sky_merchant": "Sky Merchant",
+
+  "block.skyblockcraft.coin_generator_basic": "Générateur de coins basique",
+  "block.skyblockcraft.coin_generator_advanced": "Générateur de coins avancé",
+  "block.skyblockcraft.coin_generator_elite": "Générateur de coins élite",
+
+  "skyblockcraft.generator.limit_reached": "§cLimite de générateurs atteinte (%d/%d) — retirez-en un d'abord."
 }

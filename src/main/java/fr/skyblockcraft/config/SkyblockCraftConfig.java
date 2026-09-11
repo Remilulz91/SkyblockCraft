@@ -60,6 +60,11 @@ public class SkyblockCraftConfig {
     /** If true, OPs (permission level 2+) can build/break on any island. */
     public boolean opBypassIslandProtection = true;
 
+    // === Coin generators (v0.4) ===
+
+    /** Maximum coin generators (all tiers combined) that can be placed on one island. */
+    public int maxGeneratorsPerIsland = 5;
+
     // === Economy settings ===
 
     /** Starting coin balance for a new player. */
@@ -172,6 +177,10 @@ public class SkyblockCraftConfig {
         general.offers.put("bookshelf", "minecraft:bookshelf:1:30");
         general.offers.put("book", "minecraft:book:4:20");
         general.offers.put("chest", "minecraft:chest:1:15");
+        // v0.4: coin generators
+        general.offers.put("gen_basic", "skyblockcraft:coin_generator_basic:1:500");
+        general.offers.put("gen_advanced", "skyblockcraft:coin_generator_advanced:1:3000");
+        general.offers.put("gen_elite", "skyblockcraft:coin_generator_elite:1:15000");
         general.buybacks.put("oak_log", "minecraft:oak_log:16:12");
         general.buybacks.put("dirt", "minecraft:dirt:64:2");
         general.buybacks.put("sand", "minecraft:sand:32:8");

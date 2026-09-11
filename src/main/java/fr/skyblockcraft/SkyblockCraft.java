@@ -5,6 +5,9 @@ import fr.skyblockcraft.commands.IslandCommand;
 import fr.skyblockcraft.commands.SkyblockCommand;
 import fr.skyblockcraft.config.SkyblockCraftConfig;
 import fr.skyblockcraft.economy.EconomyManager;
+import fr.skyblockcraft.generator.GeneratorPlacement;
+import fr.skyblockcraft.generator.ModBlockEntities;
+import fr.skyblockcraft.generator.ModBlocks;
 import fr.skyblockcraft.island.IslandManager;
 import fr.skyblockcraft.island.IslandProtection;
 import fr.skyblockcraft.merchant.SkyMerchantManager;
@@ -59,7 +62,12 @@ public class SkyblockCraft implements ModInitializer {
         SkyblockCraftConfig.load();
         LOGGER.info("[SkyblockCraft] Configuration loaded");
 
-        // 2. Register screen handlers (needed on both server and client)
+        // 2. Register blocks and block entities (must happen before ScreenHandlers
+        //    so their blocks exist when the BlockEntityType wires them up)
+        ModBlocks.register();
+        ModBlockEntities.register();
+
+        // 3. Register screen handlers (needed on both server and client)
         ModScreenHandlers.register();
 
         // 3. Load merchant offers from config
@@ -77,6 +85,8 @@ public class SkyblockCraft implements ModInitializer {
         SkyMerchantManager.registerDamageHandler();
         // Register island protection (break/place restrictions on other players' islands)
         IslandProtection.register();
+        // Register the max-generators-per-island guard
+        GeneratorPlacement.register();
         LOGGER.info("[SkyblockCraft] Handlers registered");
 
         // 6. Server lifecycle: ensure persistent state is loaded for each world

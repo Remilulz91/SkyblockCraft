@@ -97,5 +97,11 @@
   "skyblockcraft.command.unknown_merchant_type": "Unknown merchant type: %s. Valid types: farmer, miner, adventurer, general.",
   "skyblockcraft.command.reloaded": "Configuration reloaded (%d offers, %d buybacks).",
 
-  "entity.skyblockcraft.sky_merchant": "Sky Merchant"
+  "entity.skyblockcraft.sky_merchant": "Sky Merchant",
+
+  "block.skyblockcraft.coin_generator_basic": "Basic Coin Generator",
+  "block.skyblockcraft.coin_generator_advanced": "Advanced Coin Generator",
+  "block.skyblockcraft.coin_generator_elite": "Elite Coin Generator",
+
+  "skyblockcraft.generator.limit_reached": "§cGenerator limit reached (%d/%d) — remove one first."
 }
